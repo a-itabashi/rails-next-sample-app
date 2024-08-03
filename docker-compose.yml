@@ -1,4 +1,3 @@
-version: "3"
 services:
   db:
     image: mysql:8.0.32
@@ -14,6 +13,8 @@ services:
   rails:
     build:
       context: ./rails
+    # コンテナ内での操作権限をrootに設定
+    user: "root"
     command: bash -c "bundle exec rails s -b '0.0.0.0'"
     volumes:
       - ./rails:/myapp
@@ -25,5 +26,7 @@ services:
     stdin_open: true
     environment:
       - RAILS_ENV=development
+    # この設定重要
+    working_dir: /myapp
 volumes:
   mysql_data:
