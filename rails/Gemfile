@@ -23,6 +23,9 @@ group :development, :test do
   gem "pry-doc"
   gem "pry-rails"
   gem 'rspec-rails'
+  gem 'rubocop-faker'
+  gem 'rubocop-rails'
+  gem "rubocop-rspec"
 end
 
 group :development do
