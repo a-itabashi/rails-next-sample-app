@@ -23,6 +23,15 @@ gem "rack-cors"
 # 環境毎の設定管理を行う
 gem "config"
 
+# ユーザー認証を提供する
+gem "devise"
+
+# devise を日本語化する
+gem "devise-i18n"
+
+# ユーザーのトークン認証を提供する
+gem "devise_token_auth"
+
 group :development, :test do
   gem "pry-byebug", "~> 3.10", ">= 3.10.1"
   gem "pry-doc"
