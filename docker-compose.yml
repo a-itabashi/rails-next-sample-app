@@ -14,7 +14,7 @@ services:
     build:
       context: ./rails
     # コンテナ内での操作権限をrootに設定
-    # user: "root"
+    user: "root"
     command: bash -c "bundle exec rails s -b '0.0.0.0'"
     volumes:
       - ./rails:/myapp
