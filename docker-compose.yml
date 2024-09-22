@@ -18,6 +18,8 @@ services:
     command: bash -c "bundle exec rails s -b '0.0.0.0'"
     volumes:
       - ./rails:/myapp
+      - bundle_data:/myapp/vendor/bundle
+      - yarn_data:/myapp/node_modules
     ports:
       - 3000:3000
     depends_on:
@@ -30,3 +32,5 @@ services:
     working_dir: /myapp
 volumes:
   mysql_data:
+  bundle_data:
+  yarn_data:
