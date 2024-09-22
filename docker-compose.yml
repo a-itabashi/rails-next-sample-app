@@ -30,6 +30,15 @@ services:
       - RAILS_ENV=development
     # この設定重要
     working_dir: /myapp
+  next:
+    build:
+      dockerfile: ./next/Dockerfile
+    tty: true
+    stdin_open: true
+    volumes:
+      - ./next:/app
+    ports:
+      - "8000:3000"
 volumes:
   mysql_data:
   bundle_data:
