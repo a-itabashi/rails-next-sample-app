@@ -70,4 +70,7 @@ RSpec.configure do |config|
   config.before(:each) do
     host! "localhost"
   end
+
+  # FactoryBotの宣言を省略
+  config.include FactoryBot::Syntax::Methods
 end
