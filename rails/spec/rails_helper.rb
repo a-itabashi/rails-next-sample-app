@@ -67,7 +67,7 @@ RSpec.configure do |config|
   # config.filter_gems_from_backtrace("gem name")
 
   # これ設定しないとテスト通らない
-  config.before(:each) do
+  config.before(:each, type: :request) do
     host! "localhost"
   end
 
