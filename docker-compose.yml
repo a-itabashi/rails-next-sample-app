@@ -26,6 +26,7 @@ services:
       - db
     tty: true
     stdin_open: true
+    # rails_helper.rbの環境変数の設定を'test'に修正をすること
     environment:
       - RAILS_ENV=development
     # この設定重要
