@@ -38,6 +38,9 @@ gem "rails-i18n"
 
 gem "kaminari"
 
+# enum を日本語化する
+gem "enum_help"
+
 group :development, :test do
   gem "bullet"
   gem "factory_bot_rails"
