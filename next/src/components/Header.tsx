@@ -14,6 +14,7 @@ import {
   ListItemIcon,
   Typography
 } from '@mui/material';
+import axios, { AxiosResponse, AxiosError } from 'axios';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/router';
@@ -32,6 +33,28 @@ const Header = () => {
   const handleClose = () => {
     setAnchorEl(null);
   };
+
+  const addNewArticle = () => {
+    const url = process.env.NEXT_PUBLIC_API_BASE_URL + '/current/articles';
+
+    const headers = {
+      'Content-Type': 'application/json',
+      'access-token': localStorage.getItem('access-token'),
+      client: localStorage.getItem('client'),
+      uid: localStorage.getItem('uid')
+    };
+
+    axios({ method: 'POST', url: url, headers: headers })
+      .then((res: AxiosResponse) => {
+        router.push('/current/articles/edit/' + res.data.id);
+      })
+      .catch((e: AxiosError<{ error: string }>) => {
+        console.log(e.message);
+      });
+  };
+
+  const hideHeaderPathnames = ['/current/articles/edit/[id]'];
+  if (hideHeaderPathnames.includes(router.pathname)) return <></>;
 
   return (
     <AppBar
@@ -75,20 +98,23 @@ const Header = () => {
                       Sign in
                     </Button>
                   </Link>
-                  <Button
-                    color='primary'
-                    variant='outlined'
-                    sx={{
-                      textTransform: 'none',
-                      fontSize: 16,
-                      borderRadius: 2,
-                      boxShadow: 'none',
-                      border: '1.5px solid #3EA8FF',
-                      ml: 2
-                    }}
-                  >
-                    Sign Up
-                  </Button>
+                  <Link href='/sign_up'>
+                    <Button
+                      color='primary'
+                      variant='outlined'
+                      sx={{
+                        textTransform: 'none',
+                        fontSize: 16,
+                        lineHeight: '27px',
+                        borderRadius: 2,
+                        boxShadow: 'none',
+                        border: '1.5px solid #3EA8FF',
+                        ml: 2
+                      }}
+                    >
+                      Sign Up
+                    </Button>
+                  </Link>
                 </Box>
               )}
               {user.isSignedIn && (
@@ -110,6 +136,7 @@ const Header = () => {
                         width: 100,
                         boxShadow: 'none'
                       }}
+                      onClick={addNewArticle}
                     >
                       Add new
                     </Button>
