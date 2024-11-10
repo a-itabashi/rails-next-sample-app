@@ -1,78 +1,128 @@
 import ArticleIcon from '@mui/icons-material/Article';
-import PersonIcon from '@mui/icons-material/Person';
-import UpdateIcon from '@mui/icons-material/Update';
-import { Box, Container, Typography, Card, List, ListItem, ListItemText } from '@mui/material';
+import ChevronLeftIcon from '@mui/icons-material/ChevronLeft';
+import SettingsIcon from '@mui/icons-material/Settings';
+import {
+  Avatar,
+  Box,
+  Container,
+  Typography,
+  Card,
+  List,
+  ListItem,
+  ListItemText,
+  Tooltip,
+  IconButton
+} from '@mui/material';
 import camelcaseKeys from 'camelcase-keys';
 import type { NextPage } from 'next';
+import Link from 'next/link';
 import { useRouter } from 'next/router';
 import useSWR from 'swr';
 import Error from '@/components/Error';
 import Loading from '@/components/Loading';
 import MarkdownText from '@/components/MarkdownText';
+import { useUserState } from '@/hooks/useGlobalState';
+import { useRequireSignedIn } from '@/hooks/useRequireSignedIn';
+import { styles } from '@/styles';
 import { fetcher } from '@/utils';
 
-type ArticleProps = {
+type CurrentArticleProps = {
   title: string;
   content: string;
   createdAt: string;
-  updatedAt: string;
-  user: {
-    name: string;
-  };
+  status: string;
 };
 
-const ArticleDetail: NextPage = () => {
+const CurrentArticleDetail: NextPage = () => {
+  useRequireSignedIn();
+  const [user] = useUserState();
   const router = useRouter();
-  const url = process.env.NEXT_PUBLIC_API_BASE_URL + '/articles/';
+  const url = process.env.NEXT_PUBLIC_API_BASE_URL + '/current/articles/';
   const { id } = router.query;
 
-  const { data, error } = useSWR(id ? url + id : null, fetcher);
+  const { data, error } = useSWR(user.isSignedIn && id ? url + id : null, fetcher);
+  console.log(user);
+  console.log(id);
+  console.log(error);
+
   if (error) return <Error />;
   if (!data) return <Loading />;
 
-  const article: ArticleProps = camelcaseKeys(data);
+  const article: CurrentArticleProps = camelcaseKeys(data);
 
   return (
     <Box
+      css={styles.pageMinHeight}
       sx={{
         backgroundColor: '#EDF2F7',
-        pb: 6,
-        minHeight: 'calc(100vh - 57px)'
+        pb: 6
       }}
     >
       <Box
         sx={{
-          display: { xs: 'flex', lg: 'none' },
-          alignItems: 'center',
+          display: { xs: 'block', lg: 'none' },
           backgroundColor: 'white',
           borderTop: '0.5px solid #acbcc7',
           height: 56,
-          pl: 4,
           color: '#6e7b85'
         }}
       >
-        <Box sx={{ pr: 1 }}>
-          <PersonIcon />
-        </Box>
-        <Box sx={{ mr: 2 }}>
-          <Typography component='p'>著者:</Typography>
-        </Box>
-        <Typography component='p' sx={{ fontWeight: 'bold', color: 'black' }}>
-          {article.user.name}
-        </Typography>
+        <Container
+          maxWidth='sm'
+          sx={{
+            display: 'flex',
+            justifyContent: 'space-around',
+            alignItems: 'center',
+            height: '100%'
+          }}
+        >
+          <Box sx={{ display: 'flex', gap: '0 8px' }}>
+            <SettingsIcon />
+            <Typography component='p' sx={{ mr: 1, fontSize: { xs: 14, sm: 16 } }}>
+              ステータス: {article.status}
+            </Typography>
+          </Box>
+          <Box sx={{ display: 'flex', gap: '0 8px' }}>
+            <ArticleIcon />
+            <Typography component='p' sx={{ mr: 1, fontSize: { xs: 14, sm: 16 } }}>
+              公開: {article.createdAt}
+            </Typography>
+          </Box>
+        </Container>
       </Box>
       <Container maxWidth='lg'>
         <Box sx={{ pt: 6, pb: 3 }}>
-          <Box sx={{ maxWidth: 840, m: 'auto', textAlign: 'center' }}>
-            <Typography
-              component='h2'
-              sx={{
-                fontSize: { xs: 21, sm: 25 },
-                fontWeight: 'bold'
-              }}
-            >
-              {article.title}
-            </Typography>
+          <Box
+            sx={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '0 8px',
+              m: 'auto'
+            }}
+          >
+            <Box sx={{ width: 40, height: 40 }}>
+              <Link href={'/current/articles'}>
+                <Avatar>
+                  <Tooltip title='記事の管理に戻る'>
+                    <IconButton sx={{ backgroundColor: '#DDDDDD' }}>
+                      <ChevronLeftIcon sx={{ color: '#99AAB6' }} />
+                    </IconButton>
+                  </Tooltip>
+                </Avatar>
+              </Link>
+            </Box>
+            <Box sx={{ textAlign: 'center', width: '100%' }}>
+              <Typography
+                component='h2'
+                sx={{
+                  fontSize: { xs: 21, sm: 25 },
+                  fontWeight: 'bold',
+                  lineHeight: '40px'
+                }}
+              >
+                {article.title}
+              </Typography>
+            </Box>
           </Box>
           <Typography
             component='p'
@@ -129,16 +179,16 @@ const ArticleDetail: NextPage = () => {
                   >
                     <Box sx={{ display: 'flex', alignItems: 'center' }}>
                       <Box sx={{ pr: 1 }}>
-                        <PersonIcon />
+                        <SettingsIcon />
                       </Box>
-                      <ListItemText primary='著者' />
+                      <ListItemText primary='ステータス' />
                     </Box>
                     <Box>
-                      <ListItemText primary={article.user.name} />
+                      <ListItemText primary={article.status} />
                     </Box>
                   </Box>
                 </ListItem>
-                <ListItem divider>
+                <ListItem>
                   <Box
                     sx={{
                       display: 'flex',
@@ -158,26 +208,6 @@ const ArticleDetail: NextPage = () => {
                     </Box>
                   </Box>
                 </ListItem>
-                <ListItem>
-                  <Box
-                    sx={{
-                      display: 'flex',
-                      justifyContent: 'space-between',
-                      alignItems: 'center',
-                      width: '100%'
-                    }}
-                  >
-                    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                      <Box sx={{ pr: 1 }}>
-                        <UpdateIcon />
-                      </Box>
-                      <ListItemText primary='本文更新' />
-                    </Box>
-                    <Box>
-                      <ListItemText primary={article.updatedAt} />
-                    </Box>
-                  </Box>
-                </ListItem>
               </List>
             </Card>
           </Box>
@@ -187,4 +217,4 @@ const ArticleDetail: NextPage = () => {
   );
 };
 
-export default ArticleDetail;
+export default CurrentArticleDetail;
