@@ -50,6 +50,7 @@ const SignUp: NextPage = () => {
       await axios({
         method: 'POST',
         url: url,
+        // eslint-disable-next-line camelcase
         data: { ...data, confirm_success_url: confirmSuccessUrl },
         headers: headers
       })
