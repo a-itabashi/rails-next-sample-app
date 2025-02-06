@@ -20,4 +20,4 @@ test:
  production:
   <<: *default
   database: myapp_production
-  url: <%= Rails.application.credentials.production.database_url %>
+  url: "<%= Rails.application.credentials.production.database_url %>"
