@@ -40,6 +40,9 @@ Rails.application.configure do
   config.force_ssl = true
   # config.force_ssl = false
 
+  config.force_ssl = true
+config.ssl_options = { redirect: { exclude: -> request { request.env['HTTP_USER_AGENT'].include?('ELB-HealthChecker') } } }
+
   # Log to STDOUT by default
   config.logger = ActiveSupport::Logger.new($stdout).
                     tap  {|logger| logger.formatter = ::Logger::Formatter.new }.
